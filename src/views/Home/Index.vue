@@ -13,13 +13,15 @@
         </router-link>
       </div>
       <div class="single-banner">
-        <swiper :options="swiperOption" ref="mySwiper">
-          <swiper-slide><img src="../../assets/images/banner2.jpg" alt=""></swiper-slide>
-          <swiper-slide><img src="../../assets/images/banner1.png" alt=""></swiper-slide>
-          <swiper-slide><img src="../../assets/images/banner3.jpg" alt=""></swiper-slide>
-          <swiper-slide><img src="../../assets/images/banner4.jpg" alt=""></swiper-slide>
-          <div class="swiper-pagination" slot="pagination"></div>
-        </swiper>
+        <keep-alive>
+          <swiper :options="swiperOption" ref="mySwiper">
+            <swiper-slide><img src="../../assets/images/banner2.jpg" alt=""></swiper-slide>
+            <swiper-slide><img src="../../assets/images/banner1.png" alt=""></swiper-slide>
+            <swiper-slide><img src="../../assets/images/banner3.jpg" alt=""></swiper-slide>
+            <swiper-slide><img src="../../assets/images/banner4.jpg" alt=""></swiper-slide>
+            <div class="swiper-pagination" slot="pagination"></div>
+          </swiper>
+        </keep-alive>
       </div>
       <div class="nav-menu-wrap">
         <router-link to="/evaluation?view=enquiryInfo">
@@ -30,41 +32,32 @@
           <img src="../../assets/images/index2.png" alt="">
           <p>评估</p>
         </router-link>
-        <router-link to="">
+        <router-link to="/EditValuation">
           <img src="../../assets/images/index3.png" alt="">
           <p>人工估价</p>
-        </router-link>
-        <router-link to="">
-          <img src="../../assets/images/index4.png" alt="">
-          <p>大宗交易</p>
         </router-link>
       </div>
       <div class="news-scroll-wrap border-topbottom">
         <div class="news-bg"></div>
         <div class="news-scroll border-left">
-          <div class="news-item">
-            <router-link class="one-line" to="">华侨哈哈哈哈哈啊哈城以45.8亿成功拿下宝安滨海！</router-link>
-          </div>
+          <keep-alive>
+            <swiper :options="swiperOptionTxt" ref="mySwiperTxt">
+              <swiper-slide
+                v-for="item in slideList"
+                :key="item.id"
+              >
+                <a
+                  class="one-line"
+                  @click="toDetail(item)"
+                >
+                  {{item.newsTitle}}
+                </a>
+              </swiper-slide>
+            </swiper>
+          </keep-alive>
         </div>
       </div>
-      <div class="news-list-wrap">
-        <router-link
-          to=""
-          class="news-list border-bottom"
-          v-for="item of indexNewsList"
-          :key="item.id"
-        >
-          <div class="news-title-wrap">
-            <h3 class="two-line">{{item.newsTitle}}</h3>
-            <div class="news-remark">
-              <span>千千</span>
-              <span>58浏览</span>
-              <span>1天前</span>
-            </div>
-          </div>
-          <div class="news-pic"><img src="../../assets/images/news-pic.png" alt=""></div>
-        </router-link>
-      </div>
+      <estate-charts></estate-charts>
     </div>
     <nav-footer></nav-footer>
   </div>
@@ -73,14 +66,22 @@
 <script>
 import { mapState } from 'vuex'
 import navFooter from '@/components/NavFooter.vue'
+import estateCharts from './Components/estateCharts.vue'
 import axios from 'axios'
 export default {
     name: 'Index',
     components: {
-        navFooter
+        navFooter,
+        estateCharts
     },
     computed: {
-        ...mapState(['city'])
+        ...mapState(['city']),
+        slideList () {
+            return this.$store.state.newsList
+        }
+        // mySwiperTxt () {
+        //     return this.$refs.mySwiperTxt.swiper
+        // }
     },
     data () {
         return {
@@ -88,6 +89,7 @@ export default {
             swiperOption: {
                 speed: 300,
                 autoplay: {
+                    disableOnInteraction: false,
                     delay: 3000
                 },
                 loop: true,
@@ -95,18 +97,15 @@ export default {
                     el: '.swiper-pagination'
                 }
             },
-            indexNewsList: [
-                {
-                    id: '01',
-                    newsTitle: '111华侨城以45.8亿成功拿下宝安滨海文化公园核心用地8亿成功拿下宝安滨海文化公园核心用地'
-                }, {
-                    id: '02',
-                    newsTitle: '222华侨城以45.8亿成功拿下宝安滨海文化公园核心用地8亿成功拿下宝安滨海文化公园核心用地'
-                }, {
-                    id: '03',
-                    newsTitle: '333华侨城以45.8亿成功拿下宝安滨海文化公园'
-                }
-            ]
+            swiperOptionTxt: {
+                speed: 300,
+                autoplay: {
+                    disableOnInteraction: false,
+                    delay: 3000
+                },
+                loop: true,
+                direction: 'vertical'
+            }
         }
     },
     methods: {
@@ -120,6 +119,9 @@ export default {
             if (res.ret && res.data) {
                 // this.city = res.data.city
             }
+        },
+        toDetail (item) {
+            this.$router.push(`/news/detail/${item.id}`)
         }
     },
     mounted () {
@@ -134,6 +136,9 @@ export default {
             this.lastCity = this.city
             this.getIndexInfo()
         }
+        // setInterval(() => {
+        //     this.swiper.slideNext()
+        // }, 3000)
     }
 }
 </script>
@@ -167,8 +172,8 @@ export default {
           flex: 1;
           text-align: center;
           img{
-            width: 90/$rem;
-            height: 90/$rem;
+            width: 100/$rem;
+            height: 100/$rem;
           }
           p{
             font-size: 28/$rem;
@@ -192,12 +197,14 @@ export default {
           margin-left: 18/$rem;
           padding: 9/$rem 20/$rem;
           padding-right: 0;
-          .news-item{
-            a{
-              display: block;
-              font-size: 28/$rem;
-              line-height: 32/$rem;
-              width: 480/$rem;
+          .swiper-container{
+            height: 32/$rem !important;
+            .swiper-slide{
+                display: block;
+                font-size: 28/$rem;
+                line-height: 32/$rem;
+                // height: 32/$rem !important;
+                width: 480/$rem;
             }
           }
         }

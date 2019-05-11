@@ -66,6 +66,16 @@ $themeTextColor: #666;
     }
 }
 
+.back-btn {
+    padding-left: 0 !important;
+    i {
+        font-size: 54/$rem !important;
+        color: #909090;
+        margin-left: -8/$rem;
+        font-weight: bold;
+    }
+}
+
 
 /* 超过一行省略 */
 

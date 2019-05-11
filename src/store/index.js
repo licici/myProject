@@ -4,7 +4,7 @@ import state from './state'
 import mutations from './mutations'
 
 Vue.use(Vuex)
-
+console.log(state.newsList)
 export default new Vuex.Store({
     state: state,
     // actions: {

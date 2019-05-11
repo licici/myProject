@@ -5,6 +5,8 @@ import Evaluation from '@/views/Evaluation/Evaluation'
 import News from '@/views/News/News.vue'
 import User from '@/views/User/User.vue'
 import City from '@/views/City/City.vue'
+import NewsDetail from '@/views/News/Detail.vue'
+import EditValuation from '@/views/ArtiValuation/EditValuation.vue'
 
 Vue.use(Router)
 
@@ -28,6 +30,17 @@ export default new Router({
     }, {
         path: '/city',
         name: 'City',
-        component: City
+        component: City,
+        meta: {
+            keep: true
+        }
+    }, {
+        path: '/news/detail/:id',
+        name: 'NewsDetail',
+        component: NewsDetail
+    }, {
+        path: '/EditValuation',
+        name: 'EditValuation',
+        component: EditValuation
     }]
 })
